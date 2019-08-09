@@ -1,0 +1,123 @@
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form [formGroup]="flightSearchForm" (ngSubmit)="onSubmit()" class="example-form">
+          <div class="form-group">
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="Enter Origin City" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.flightFrom.errors }"
+                [matAutocomplete]="auto" [formControl]="fromCtrl">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let item of filteredFrom | async" [value]="item" (onSelectionChange)= "onSelect(item)">
+                  <span>{{ item }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <div *ngIf="submitted && f.flightFrom.errors" class="invalid-feedback">
+              <div *ngIf="f.flightFrom.errors.required">Origin City is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="Enter Destination City" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f.flightTo.errors }" [matAutocomplete]="auto1" [formControl]="destinationCtrl">
+              <mat-autocomplete #auto1="matAutocomplete">
+                <mat-option *ngFor="let item of filteredDestination | async" [value]="item" (onSelectionChange)= "onSelectdestination(item)">
+                  <span>{{ item }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <div *ngIf="submitted && f.flightTo.errors" class="invalid-feedback">
+              <div *ngIf="f.flightTo.errors.required">Destination City is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <mat-form-field class="example-full-width">
+              <mat-select placeholder="Departure Date" formControlName="departureDate">
+                <mat-option *ngFor="let depart_At of departureAt" [value]="depart_At">
+                  {{ depart_At }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div *ngIf="submitted && f.departureDate.errors" class="invalid-feedback">
+              <div *ngIf="f.departureDate.errors.required">Departure Date is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <mat-form-field class="example-full-width">
+              <input matInput placeholder="Passenger" formControlName="passenger" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.passenger.errors }">
+            </mat-form-field>
+            <div *ngIf="submitted && f.passenger.errors" class="invalid-feedback">
+              <div *ngIf="f.passenger.errors.required">Passenger is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button [disabled]="flightSearchForm.invalid" class="btn btn-primary">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-card class="result">
+  <mat-card-content>
+    <h2 class="example-h2">Result</h2>
+
+    <mat-slider class="example-margin" [disabled]="disabled" [invert]="invert" [max]="max" [min]="min" [step]="step"
+      [thumbLabel]="thumbLabel" [(ngModel)]="value" [vertical]="vertical" (change)="onPriceChange($event)">
+    </mat-slider>
+  </mat-card-content>
+</mat-card>
+
+<div class="example-container mat-elevation-z8">
+  <mat-table #table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="flight_id">
+      <mat-header-cell *matHeaderCellDef> Flight Number </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.flight_id}} </mat-cell>
+    </ng-container>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="source">
+      <mat-header-cell *matHeaderCellDef> From </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.source}} </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="destination">
+      <mat-header-cell *matHeaderCellDef> To </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.destination}} </mat-cell>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="departs_at">
+      <mat-header-cell *matHeaderCellDef> Departure Time </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.departs_at}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="arrives_at">
+      <mat-header-cell *matHeaderCellDef> Arrive Time </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.arrives_at}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="fare">
+      <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ "Rs " +element.fare}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button class="btn btn-primary"> Book this flight</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" [showFirstLastButtons]="true">
+  </mat-paginator>
+</div>
